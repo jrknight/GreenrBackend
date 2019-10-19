@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using GreenrAPI.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace GreenrAPI
         }
 
         public DbContextOptions Options { get; }
+
+        public DbSet<Trip> Trips { get; set; }
 
     }
 }
