@@ -10,7 +10,8 @@ namespace GreenrAPI.Entities
     {
         public string FullName { get; set; }
 
+        public int Score { get; }
 
-        public IEnumerable<Trip> Trips { get; set; }
+        public IEnumerable<UserTrip> Trips { get; }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace GreenrAPI.Entities
 {
+    [Table("tblTrips")]
     public class Trip
     {
         [Key]

@@ -8,13 +8,16 @@ using GreenrAPI.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -61,7 +64,8 @@ namespace GreenrAPI
             //Creates and configures the role "User" in the database and adds roles
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<GreenrDbContext>();
 
-            //Adds Authentication as 
+            //Adds Authentication with Json Web Tokens
+            /// TODO: create with OAuth2
             services.AddAuthentication(cfg => {
                 cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 
@@ -79,14 +83,14 @@ namespace GreenrAPI
                 };
             });
 
-
-
             var testDbConnectionString = configurationRoot["connectionStrings:LocalDb"];
 
             services.AddDbContext<GreenrDbContext>(options => options.UseSqlServer(testDbConnectionString));
 
             //services.AddTransient<IConfigurationRoot>();
-            
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

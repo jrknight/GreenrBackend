@@ -4,14 +4,16 @@ using GreenrAPI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace GreenrAPI.Migrations
 {
     [DbContext(typeof(GreenrDbContext))]
-    partial class GreenrDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191021062811_AddUserScore")]
+    partial class AddUserScore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,27 +43,7 @@ namespace GreenrAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("tblTrips");
-                });
-
-            modelBuilder.Entity("GreenrAPI.Entities.UserTrip", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("TripId");
-
-                    b.Property<string>("UserId")
-                        .IsRequired();
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TripId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("tblUserTrips");
+                    b.ToTable("Trips");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -236,6 +218,8 @@ namespace GreenrAPI.Migrations
 
                     b.Property<string>("FullName");
 
+                    b.Property<int>("Score");
+
                     b.ToTable("User");
 
                     b.HasDiscriminator().HasValue("User");
@@ -244,21 +228,8 @@ namespace GreenrAPI.Migrations
             modelBuilder.Entity("GreenrAPI.Entities.Trip", b =>
                 {
                     b.HasOne("GreenrAPI.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("GreenrAPI.Entities.UserTrip", b =>
-                {
-                    b.HasOne("GreenrAPI.Entities.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("GreenrAPI.Entities.User", "User")
                         .WithMany("Trips")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

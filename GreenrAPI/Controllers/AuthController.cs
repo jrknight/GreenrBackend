@@ -1,5 +1,6 @@
 ﻿using GreenrAPI.Entities;
 using GreenrAPI.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -18,24 +19,27 @@ namespace GreenrAPI.Controllers
     [Route("api/auth")]
     public class AuthController : Controller
     {
-        private GreenrDbContext ctx;
+        
         private SignInManager<User> signInMgr;
         private UserManager<User> userMgr;
         private IPasswordHasher<User> passwordHasher;
-        private IConfiguration config;
+        private IConfigurationRoot config;
 
-        public AuthController(GreenrDbContext context,
-            SignInManager<User> signInManager,
+        public AuthController(SignInManager<User> signInManager,
             UserManager<User> userManager,
             IPasswordHasher<User> hasher,
-            IConfiguration config)
+            IConfiguration config,
+            IHostingEnvironment environment)
         {
-            ctx = context;
             signInMgr = signInManager;
             userMgr = userManager;
             passwordHasher = hasher;
-            this.config = config;
+
+            var builder = new ConfigurationBuilder().SetBasePath(environment.ContentRootPath).AddJsonFile("config.json");
+
+            config = builder.Build();
         }
+
 
         [ValidateModel]
         [HttpPost("login")]
@@ -48,12 +52,13 @@ namespace GreenrAPI.Controllers
                 {
                     return Ok(result);
                 }
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
                 Debug.WriteLine("Exception on Authentication" + ex);
+                return BadRequest("There was a critical problem logging in.");
             }
-            return BadRequest("Failed to log in.");
         }
 
 
@@ -99,6 +104,7 @@ namespace GreenrAPI.Controllers
             catch (Exception ex)
             {
                 Debug.WriteLine($"Exception thrown while creating a JWT: {ex}");
+                return BadRequest("There was a problem creating the JWT");
             }
 
             return BadRequest("Failed to generate token.");
@@ -139,25 +145,18 @@ namespace GreenrAPI.Controllers
                     //newUser = ctx.Users.Where(u => u.UserName == newUser.UserName).FirstOrDefault();
 
 
-                    return Created($"api/auth/login", result.Succeeded);
+                    return Created($"api/auth/login", result);
                 }
                 else
                 {
                     await userMgr.DeleteAsync(newUser).ConfigureAwait(false);
-                    return BadRequest($"There was a problem creating the user. {result}");
+                    return BadRequest(result);
                 }
             }
 
-            ///TODO: Add extra checks for correct provided information
+            ///TODO: Add extra checks for correct provided information  
 
             return BadRequest($"A user already exists with the username \"{model.UserName}\".");
-        }
-
-
-        [HttpGet("user")]
-        public async Task<IActionResult> GetUserInfo()
-        {
-
         }
     }
 }

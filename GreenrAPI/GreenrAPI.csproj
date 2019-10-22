@@ -11,6 +11,8 @@
     <Compile Remove="Migrations\20191010052211_SetupMigration.Designer.cs" />
     <Compile Remove="Migrations\20191010052404_SetupMigration.cs" />
     <Compile Remove="Migrations\20191010052404_SetupMigration.Designer.cs" />
+    <Compile Remove="Migrations\20191022053746_TripStructureChange.cs" />
+    <Compile Remove="Migrations\20191022053746_TripStructureChange.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
